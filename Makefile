@@ -1,11 +1,4 @@
-LIBTLS_PKGCONF_PATH = /usr/lib/libressl/pkgconfig
-
-FLAGS = `PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --cflags --libs libtls`
-
-CC = cc
-
-SRC = tlsrp.c util.c
-OBJ = $(SRC:.c=.o)
+.include "config.mk"
 
 all: config.h tlsrp
 
