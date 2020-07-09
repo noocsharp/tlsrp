@@ -6,10 +6,10 @@ config.h:
 	cp config.def.h $@
 
 .c.o:
-	$(CC) -c $< $(FLAGS)
+	$(CC) $(CFLAGS) -c $< $(FLAGS)
 
-tlsrp: $(OBJ)
-	$(CC) $(OBJ) -o $@ $(FLAGS)
+tlsrp: $(OBJ) config.h
+	$(CC) $(CFLAGS) $(OBJ) -o $@ $(FLAGS)
 
 clean:
 	rm -f $(OBJ) tlsrp
