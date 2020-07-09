@@ -124,7 +124,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
 
     char *cliptr = NULL, *serptr = NULL;
 
-    size_t clicount = 0, sercount = 0;
+    ssize_t clicount = 0, sercount = 0;
     ssize_t written = 0;
 
     while (poll(pfd, 2, TIMEOUT) != 0) {
