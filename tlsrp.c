@@ -190,7 +190,7 @@ int
 main(int argc, char* argv[])
 {
     int serverfd = 0, clientfd = 0, bindfd = 0;
-    struct sockaddr_storage client_sa, server_sa = {0};
+    struct sockaddr_storage client_sa = {0};
     struct tls_config *config;
     struct tls *tls_client, *conn;
     socklen_t client_sa_len = 0;
