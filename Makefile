@@ -1,6 +1,6 @@
 LIBTLS_PKGCONF_PATH = /usr/lib/libressl/pkgconfig
 
-FLAGS = $(shell PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --cflags --libs libtls)
+FLAGS = `PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --cflags --libs libtls`
 
 CC = cc
 
