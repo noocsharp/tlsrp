@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tls.h>
 
 #ifdef __OpenBSD__
 #include <unistd.h>
@@ -27,6 +28,34 @@ verr(const char *fmt, va_list ap)
 	}
 }
 
+static void
+tls_conf_err(struct tls_config *config, const char *fmt, va_list ap)
+{
+    const char* errstring = tls_config_error(config);
+	vfprintf(stderr, fmt, ap);
+
+	if (fmt[0] && fmt[strlen(fmt) - 1] == ':') {
+		fputc(' ', stderr);
+        fputs(errstring, stderr);
+	} else {
+		fputc('\n', stderr);
+	}
+}
+
+static void
+tls_err(struct tls *ctx, const char *fmt, va_list ap)
+{
+    const char* errstring = tls_error(ctx);
+	vfprintf(stderr, fmt, ap);
+
+	if (fmt[0] && fmt[strlen(fmt) - 1] == ':') {
+		fputc(' ', stderr);
+        fputs(errstring, stderr);
+	} else {
+		fputc('\n', stderr);
+	}
+}
+
 void
 warn(const char *fmt, ...)
 {
@@ -39,6 +68,30 @@ warn(const char *fmt, ...)
 
 void
 die(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	verr(fmt, ap);
+	va_end(ap);
+
+	exit(1);
+}
+
+void
+tdie(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	verr(fmt, ap);
+	va_end(ap);
+
+	exit(1);
+}
+
+void
+tcdie(const char *fmt, ...)
 {
 	va_list ap;
 

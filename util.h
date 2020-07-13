@@ -13,6 +13,8 @@ extern char *argv0;
 
 void warn(const char *, ...);
 void die(const char *, ...);
+void tdie(const char *, ...);
+void tcdie(const char *, ...);
 
 void epledge(const char *, const char *);
 void eunveil(const char *, const char *);
