@@ -132,7 +132,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         if ((pfd[CLIENT].revents & POLLIN) && clicount == 0) {
             clicount = tls_read(clientconn, clibuf, BUF_SIZE);
             if (clicount == -1) {
-                die("client read failed: %s\n", tls_error(clientconn));
+                tdie("client read failed:");
                 return -2;
             } else if (clicount == TLS_WANT_POLLIN) {
                 pfd[CLIENT].events = POLLIN;
@@ -163,7 +163,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         if ((pfd[CLIENT].revents & POLLOUT) && sercount > 0) {
             written = tls_write(clientconn, serptr, sercount);
             if (written == -1)
-                die("failed tls_write: %s\n", tls_error(clientconn));
+                tdie("failed tls_write:");
             else if (written == TLS_WANT_POLLIN) {
                 pfd[CLIENT].events = POLLIN;
             } else if (written == TLS_WANT_POLLOUT) {
