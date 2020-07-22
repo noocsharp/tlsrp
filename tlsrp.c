@@ -21,8 +21,8 @@ char *argv0;
 void 
 usage()
 {
-    fprintf(stderr, "usage: %s [-h host] -p port -f PORT -ca ca_path -cert cert_path -key key_path\n", argv0);
-    fprintf(stderr, "       %s -U unixsocket -f PORT -ca ca_path -cert cert_path -key key_path\n", argv0);
+    fprintf(stderr, "usage: %s [-h backhost] [-H fronthost] -p backport -P frontport -ca ca_path -cert cert_path -key key_path\n", argv0);
+    fprintf(stderr, "       %s -U unixsocket [-H fronthost] -P frontport -ca ca_path -cert cert_path -key key_path\n", argv0);
 	exit(1);
 }
 
@@ -193,7 +193,8 @@ main(int argc, char* argv[])
     struct tls *tls_client, *conn;
     socklen_t client_sa_len = 0;
     char *usock = NULL,
-         *host  = NULL,
+         *backhost  = NULL,
+         *fronthost  = NULL,
          *backport = NULL,
          *frontport = NULL,
          *ca_path = NULL,
@@ -210,10 +211,12 @@ main(int argc, char* argv[])
         if (strcmp(argv[i], "-U") == 0)
             usock = argv[++i];
         else if (strcmp(argv[i], "-h") == 0)
-            host = argv[++i];
+            backhost = argv[++i];
+        else if (strcmp(argv[i], "-H") == 0)
+            fronthost = argv[++i];
         else if (strcmp(argv[i], "-p") == 0)
             backport = argv[++i];
-        else if (strcmp(argv[i], "-f") == 0)
+        else if (strcmp(argv[i], "-P") == 0)
             frontport = argv[++i];
         else if (strcmp(argv[i], "-ca") == 0)
             ca_path = argv[++i];
@@ -225,7 +228,7 @@ main(int argc, char* argv[])
             usage();
     }
 
-    if (usock && (host || backport))
+    if (usock && (backhost || backport))
         die("cannot use both unix and network socket");
 
     if (!ca_path || !cert_path || !key_path)
@@ -263,7 +266,7 @@ main(int argc, char* argv[])
     
     tls_config_free(config);
 
-    bindfd = dobind(host, frontport);
+    bindfd = dobind(fronthost, frontport);
 
     if (listen(bindfd, BACKLOG) == -1) {
         close(bindfd);
@@ -285,7 +288,7 @@ main(int argc, char* argv[])
                 if (usock)
                     serverfd = dounixconnect(usock);
                 else
-                    serverfd = donetworkconnect(host, backport);
+                    serverfd = donetworkconnect(backhost, backport);
 
                 if (tls_accept_socket(tls_client, &conn, clientfd) == -1) {
                     warn("tls_accept_socket: %s", tls_error(tls_client));
