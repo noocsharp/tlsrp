@@ -79,24 +79,24 @@ die(const char *fmt, ...)
 }
 
 void
-tdie(const char *fmt, ...)
+tdie(struct tls *ctx, const char *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	verr(fmt, ap);
+	tls_err(ctx, fmt, ap);
 	va_end(ap);
 
 	exit(1);
 }
 
 void
-tcdie(const char *fmt, ...)
+tcdie(struct tls_config *conf, const char *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	verr(fmt, ap);
+	tls_conf_err(conf, fmt, ap);
 	va_end(ap);
 
 	exit(1);

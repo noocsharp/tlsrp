@@ -135,7 +135,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         if ((pfd[CLIENT].revents & POLLIN) && clicount == 0) {
             clicount = tls_read(clientconn, clibuf, BUF_SIZE);
             if (clicount == -1) {
-                tdie("client read failed:");
+                tdie(clientconn, "client read failed:");
                 return -2;
             } else if (clicount == TLS_WANT_POLLIN) {
                 pfd[CLIENT].events = POLLIN;
@@ -166,7 +166,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         if ((pfd[CLIENT].revents & POLLOUT) && sercount > 0) {
             written = tls_write(clientconn, serptr, sercount);
             if (written == -1)
-                tdie("failed tls_write:");
+                tdie(clientconn, "failed tls_write:");
             else if (written == TLS_WANT_POLLIN) {
                 pfd[CLIENT].events = POLLIN;
             } else if (written == TLS_WANT_POLLOUT) {
@@ -238,34 +238,34 @@ main(int argc, char* argv[])
         usage();
 
     if ((config = tls_config_new()) == NULL)
-        tcdie("failed to get tls config:");
+        tcdie(config, "failed to get tls config:");
 
     if (tls_config_set_protocols(config, protocols) == -1)
-        tcdie("failed to set protocols:");
+        tcdie(config, "failed to set protocols:");
 
     if (tls_config_set_ciphers(config, ciphers) == -1)
-        tcdie("failed to set ciphers:");
+        tcdie(config, "failed to set ciphers:");
 
     if (tls_config_set_dheparams(config, dheparams) == -1)
-        tcdie("failed to set dheparams:");
+        tcdie(config, "failed to set dheparams:");
 
     if (tls_config_set_ecdhecurves(config, ecdhecurves) == -1)
-        tcdie("failed to set ecdhecurves:");
+        tcdie(config, "failed to set ecdhecurves:");
 
     if (tls_config_set_ca_file(config, ca_path) == -1)
-        tcdie("failed to load ca file:");
+        tcdie(config, "failed to load ca file:");
 
     if (tls_config_set_cert_file(config, cert_path) == -1)
-        tcdie("failed to load cert file:");
+        tcdie(config, "failed to load cert file:");
 
     if (tls_config_set_key_file(config, key_path) == -1)
-        tcdie("failed to load key file:");
+        tcdie(config, "failed to load key file:");
 
     if ((tls_client = tls_server()) == NULL)
         die("failed to create server context");
 
     if ((tls_configure(tls_client, config)) == -1)
-        tdie("failed to configure server");
+        tdie(tls_client, "failed to configure server:");
     
     tls_config_free(config);
 
