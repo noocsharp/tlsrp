@@ -1,4 +1,4 @@
-.include "config.mk"
+include config.mk
 
 all: config.h tlsrp
 
