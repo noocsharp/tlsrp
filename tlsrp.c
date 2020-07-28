@@ -193,7 +193,7 @@ main(int argc, char* argv[])
     int serverfd = 0, clientfd = 0, bindfd = 0;
     struct sockaddr_storage client_sa = {0};
     struct tls_config *config;
-    struct tls *tls_client, *conn;
+    struct tls *toclient, *conn;
     socklen_t client_sa_len = 0;
     char *usock = NULL,
          *backhost  = NULL,
@@ -261,11 +261,11 @@ main(int argc, char* argv[])
     if (tls_config_set_key_file(config, key_path) == -1)
         tcdie(config, "failed to load key file:");
 
-    if ((tls_client = tls_server()) == NULL)
+    if ((toclient = tls_server()) == NULL)
         die("failed to create server context");
 
-    if ((tls_configure(tls_client, config)) == -1)
-        tdie(tls_client, "failed to configure server:");
+    if ((tls_configure(toclient, config)) == -1)
+        tdie(toclient, "failed to configure server:");
     
     tls_config_free(config);
 
@@ -293,8 +293,8 @@ main(int argc, char* argv[])
                 else
                     serverfd = donetworkconnect(backhost, backport);
 
-                if (tls_accept_socket(tls_client, &conn, clientfd) == -1) {
-                    warn("tls_accept_socket: %s", tls_error(tls_client));
+                if (tls_accept_socket(toclient, &conn, clientfd) == -1) {
+                    warn("tls_accept_socket: %s", tls_error(toclient));
                     goto tlsfail;
                 }
 
