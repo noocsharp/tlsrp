@@ -1,0 +1,30 @@
+tlsrp
+=====
+
+tlsrp is a simple TLS reverse-proxy built on top of LibreSSL's libtls.
+
+      ┌────────┐   Protocol   ┌───────┐   Protocol/TLS   ┌────────┐
+      │ Server │ <==========> │ tlsrp │ <==============> │ Client │
+      └────────┘              └───────┘                  └────────┘
+
+A typical use case for tlsrp might be to turn a regular HTTP server into an
+HTTPS server. However, it is protocol agnostic, so it can be used for putting
+any TCP/IP protocol on top of a TLS layer. The server thinks its serving the
+plain protocol and the client thinks its receiving the secured protocol.
+
+Dependencies
+------------
+libtls from LibreSSL
+
+Usage
+-----
+tlsrp [-h backhost] [-H fronthost] -p backport -P frontport -ca ca_path 
+        -cert cert_path -key key_path
+
+tlsrp -U unixsocket [-H fronthost] -P frontport -ca ca_path 
+        -cert cert_path -key key_path
+
+TODO
+----
+[ ] testing
+[ ] verify compatibility with libtls-bearssl (https://sr.ht/~mcf/libtls-bearssl/)
