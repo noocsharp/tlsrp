@@ -1,0 +1,90 @@
+.Dd 2020-07-30
+.Dt TLSRP 1
+.Os
+.Sh NAME
+.Nm tlsrp
+.Nd a simple TLS reverse-proxy
+.Sh SYNOPSIS
+.Nm
+.Fl u Ar backpath
+.Fl U Ar frontpath
+.Fl a Ar ca_path
+.Fl r Ar cert_path
+.Fl k Ar key_path
+.Nm
+.Fl u Ar backpath
+.Fl P Ar frontport
+.Oo Fl H Ar fronthost Oc
+.Fl a Ar ca_path
+.Fl r Ar cert_path
+.Fl k Ar key_path
+.Nm
+.Fl p Ar backport
+.Oo Fl h Ar backhost Oc
+.Fl U Ar frontpath
+.Fl a Ar ca_path
+.Fl r Ar cert_path
+.Fl k Ar key_path
+.Nm
+.Fl p Ar backport
+.Oo Fl h Ar backhost Oc
+.Fl P Ar frontport
+.Oo Fl P Ar fronthost Oc
+.Fl a Ar ca_path
+.Fl r Ar cert_path
+.Fl k Ar key_path
+
+.Sh DESCRIPTION
+.Nm
+is a simple TLS reverse-proxy. It can be used to serve any TCP/IP protocol over TLS.
+
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl a Ar ca_path
+.Ar ca_path
+is the file to use as the CA certificate.
+
+.It Fl h Ar backhost
+.Ar backhost
+is the hostname that the backend server is listening on. If not set explicitly, this will default to the address of the loopback interface.
+.It Fl H Ar fronthost
+.Ar fronthost
+is the hostname to listen on. If not set explicitly, this will default to the address of the loopback interface.
+
+.It Fl k Ar key_path
+.Ar key_path
+is the file to use as the private key.
+
+.It Fl p Ar backport
+.Ar backport
+is the port that the backend server is listening on.
+.It Fl P Ar frontport
+.Ar frontport
+is the port to listen on.
+
+.It Fl r Ar cert_path
+.Ar key_path
+is the file to use as the TLS certificate.
+
+.It Fl u Ar backpath
+.Ar backpath
+is the path of the unix-domain socket that the backend server is listening on.
+.It Fl U Ar frontpath
+.Ar frontpath
+is the path of the unix-domain socket to listen on.
+
+.Sh CONFIGURATION
+TLS parameters can be configured by modifying config.h. See
+.Xr tls_config_set_protocols 3
+for details on the values that various parameters can take.
+.Sh SEE ALSO
+.Xr ssl 3 ,
+.Xr tcp 7 ,
+.Xr tls_init 3
+.Sh AUTHORS
+.An Nihal Jere Aq Mt nihal@nihaljere.xyz
+.Sh CAVEATS
+Note that
+.Nm
+can listen on and forward to both unix-domain sockets and network sockets.
+However, it can only use one backend socket and one frontend socket at a time.
