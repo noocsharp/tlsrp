@@ -227,7 +227,6 @@ main(int argc, char* argv[])
     if (argc < 3)
         usage();
 
-    // TODO make parameter format enforcement stricter
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-u") == 0)
              backpath = argv[++i];
@@ -251,14 +250,14 @@ main(int argc, char* argv[])
             usage();
     }
 
-    if (backpath && (backhost || backport))
-        die("cannot receive from both unix and network socket");
+    if ((backpath && backhost) || !(backpath || backport))
+        die("can only serve on unix socket xor network socket");
 
-    if (frontpath && (fronthost || frontport))
-        die("cannot serve to both unix and network socket");
+    if ((frontpath && fronthost) || !(frontpath || frontport))
+        die("can only receive on unix socket xor network socket");
 
     if (!ca_path || !cert_path || !key_path)
-        usage();
+        die("must provide ca_path, cert_path and key_path")
 
     if ((config = tls_config_new()) == NULL)
         tcdie(config, "failed to get tls config:");
