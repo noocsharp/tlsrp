@@ -309,11 +309,10 @@ main(int argc, char* argv[])
         if ((clientfd = accept(bindfd, (struct sockaddr*) &client_sa, 
                         &client_sa_len)) == -1) {
             warn("could not accept connection:");
+            continue;
         }
 
         switch ((pid = fork())) {
-            case -1:
-                warn("fork:");
             case 0:
                 if (backpath)
                     serverfd = dounixconnect(backpath);
@@ -334,6 +333,8 @@ main(int argc, char* argv[])
                 close(clientfd);
                 close(bindfd);
                 exit(0);
+            case -1:
+                warn("fork:");
             default:
                 close(clientfd);
         }
