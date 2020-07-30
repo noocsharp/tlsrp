@@ -11,8 +11,11 @@ config.h:
 tlsrp: $(OBJ) config.h
 	$(CC) $(FLAGS) $(OBJ) -o $@
 
+certs:
+	cd CA ; ./certgen.sh
+
 clean:
 	rm -f $(OBJ) tlsrp
 
-test: tlsrp
-	LD_LIBRARY_PATH=/lib/libressl ./tlsrp -U "/tmp/conn.socket" -f 443 -a "CA/root.pem" -r "CA/tlsrp.crt" -k "CA/tlsrp.key"
+test: tlsrp certs
+	LD_LIBRARY_PATH=$(LIB_PATH) ./tlsrp -U "/tmp/conn.socket" -P 8000 -ca "CA/root.crt" -cert "CA/tlsrp.crt" -key "CA/tlsrp.key"
