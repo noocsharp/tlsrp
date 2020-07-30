@@ -221,33 +221,44 @@ main(int argc, char* argv[])
          *ca_path = NULL,
          *cert_path = NULL,
          *key_path = NULL;
+    int opt;
+    char *optstring = "a:h:H:k:p:P:r:u:U:";
 
     argv0 = argv[0];
 
-    if (argc < 3)
-        usage();
-
-    for (int i = 1; i < argc; ++i) {
-        if (strcmp(argv[i], "-u") == 0)
-             backpath = argv[++i];
-        else if (strcmp(argv[i], "-U") == 0)
-            frontpath = argv[++i];
-        else if (strcmp(argv[i], "-h") == 0)
-            backhost = argv[++i];
-        else if (strcmp(argv[i], "-H") == 0)
-            fronthost = argv[++i];
-        else if (strcmp(argv[i], "-p") == 0)
-            backport = argv[++i];
-        else if (strcmp(argv[i], "-P") == 0)
-            frontport = argv[++i];
-        else if (strcmp(argv[i], "-a") == 0)
-            ca_path = argv[++i];
-        else if (strcmp(argv[i], "-r") == 0)
-            cert_path = argv[++i];
-        else if (strcmp(argv[i], "-k") == 0)
-            key_path = argv[++i];
-        else
-            usage();
+    while ((opt = getopt(argc, argv, optstring)) != -1) {
+        switch (opt) {
+            case 'a':
+                ca_path = optarg;
+                break;
+            case 'h':
+                backhost = optarg;
+                break;
+            case 'H':
+                fronthost = optarg;
+                break;
+            case 'k':
+                key_path = optarg;
+                break;
+            case 'p':
+                backport = optarg;
+                break;
+            case 'P':
+                frontport = optarg;
+                break;
+            case 'r':
+                cert_path = optarg;
+                break;
+            case 'u':
+                backpath = optarg;
+                break;
+            case 'U':
+                frontpath = optarg;
+                break;
+            case '?':
+            default:
+                usage();
+        }
     }
 
     if ((backpath && backhost) || !(backpath || backport))
