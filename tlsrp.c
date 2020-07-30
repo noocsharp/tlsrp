@@ -24,7 +24,7 @@ char *argv0;
 static void
 usage(void)
 {
-    fprintf(stderr, "usage: %s [-u backpath | -p backport [-h backhost]] [-U frontpath | -P frontport [-H fronthost]] -ca ca_path -cert cert_path -key key_path\n", argv0);
+    fprintf(stderr, "usage: %s [-u backpath | -p backport [-h backhost]] [-U frontpath | -P frontport [-H fronthost]] -a ca_path -r cert_path -k key_path\n", argv0);
 	exit(1);
 }
 
@@ -241,11 +241,11 @@ main(int argc, char* argv[])
             backport = argv[++i];
         else if (strcmp(argv[i], "-P") == 0)
             frontport = argv[++i];
-        else if (strcmp(argv[i], "-ca") == 0)
+        else if (strcmp(argv[i], "-a") == 0)
             ca_path = argv[++i];
-        else if (strcmp(argv[i], "-cert") == 0)
+        else if (strcmp(argv[i], "-r") == 0)
             cert_path = argv[++i];
-        else if (strcmp(argv[i], "-key") == 0)
+        else if (strcmp(argv[i], "-k") == 0)
             key_path = argv[++i];
         else
             usage();
