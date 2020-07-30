@@ -24,13 +24,12 @@ char *argv0;
 static void
 usage(void)
 {
-    fprintf(stderr, "usage: %s [-h backhost] [-H fronthost] -p backport -P frontport -ca ca_path -cert cert_path -key key_path\n", argv0);
-    fprintf(stderr, "       %s -U unixsocket [-H fronthost] -P frontport -ca ca_path -cert cert_path -key key_path\n", argv0);
+    fprintf(stderr, "usage: %s [-u backpath | -p backport [-h backhost]] [-U frontpath | -P frontport [-H fronthost]] -ca ca_path -cert cert_path -key key_path\n", argv0);
 	exit(1);
 }
 
 static int
-dobind(const char *host, const char *port)
+donetworkbind(const char *host, const char *port)
 {
     int sfd = -1;
     struct addrinfo *results = NULL, *rp = NULL;
@@ -57,6 +56,24 @@ dobind(const char *host, const char *port)
         die("failed to bind:");
 
     free(results);
+    return sfd;
+}
+
+static int
+dounixbind(const char *path)
+{
+    struct sockaddr_un saddr = { .sun_family = AF_UNIX };
+    int sfd;
+
+    if (!memccpy(saddr.sun_path, path, '\0', sizeof(saddr.sun_path)))
+        die("unix socket path too long:");
+
+    if ((sfd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+        die("failed to create unix-domain socket at %s:", path);
+
+    if (bind(sfd, (struct sockaddr*)&saddr, sizeof(struct sockaddr_un)) == -1)
+        die("failed to bind to socket at %s:", path);
+
     return sfd;
 }
 
@@ -195,7 +212,8 @@ main(int argc, char* argv[])
     struct tls_config *config;
     struct tls *toclient, *conn;
     socklen_t client_sa_len = 0;
-    char *usock = NULL,
+    char *backpath = NULL,
+         *frontpath = NULL,
          *backhost  = NULL,
          *fronthost  = NULL,
          *backport = NULL,
@@ -211,8 +229,10 @@ main(int argc, char* argv[])
 
     // TODO make parameter format enforcement stricter
     for (int i = 1; i < argc; ++i) {
-        if (strcmp(argv[i], "-U") == 0)
-            usock = argv[++i];
+        if (strcmp(argv[i], "-u") == 0)
+             backpath = argv[++i];
+        else if (strcmp(argv[i], "-U") == 0)
+            frontpath = argv[++i];
         else if (strcmp(argv[i], "-h") == 0)
             backhost = argv[++i];
         else if (strcmp(argv[i], "-H") == 0)
@@ -231,8 +251,11 @@ main(int argc, char* argv[])
             usage();
     }
 
-    if (usock && (backhost || backport))
-        die("cannot use both unix and network socket");
+    if (backpath && (backhost || backport))
+        die("cannot receive from both unix and network socket");
+
+    if (frontpath && (fronthost || frontport))
+        die("cannot serve to both unix and network socket");
 
     if (!ca_path || !cert_path || !key_path)
         usage();
@@ -269,7 +292,11 @@ main(int argc, char* argv[])
     
     tls_config_free(config);
 
-    bindfd = dobind(fronthost, frontport);
+    if (frontpath)
+        bindfd = dounixbind(frontpath);
+    else
+        bindfd = donetworkbind(fronthost, frontport);
+
 
     if (listen(bindfd, BACKLOG) == -1) {
         close(bindfd);
@@ -288,8 +315,8 @@ main(int argc, char* argv[])
             case -1:
                 warn("fork:");
             case 0:
-                if (usock)
-                    serverfd = dounixconnect(usock);
+                if (backpath)
+                    serverfd = dounixconnect(backpath);
                 else
                     serverfd = donetworkconnect(backhost, backport);
 
