@@ -2,11 +2,15 @@ CC = cc
 CFLAGS = -std=c99 -Wall -Wextra
 
 # Arch Linux Testing
-LIBTLS_PKGCONF_PATH = /usr/lib/libressl/pkgconfig/
-FLAGS = `PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --cflags --libs libtls` -D_XOPEN_SOURCE=700
+# LIBTLS_PKGCONF_PATH = /usr/lib/libressl/pkgconfig/
+# CFLAGS := $(CFLAGS) `PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --cflags libtls`
+# FLAGS = `PKG_CONFIG_PATH=$(LIBTLS_PKGCONF_PATH) pkg-config --libs libtls`
 
-# OpenBSD
-# FLAGS = -ltls
+# glibc
+CFLAGS := $(CFLAGS) -D_XOPEN_SOURCE=700
+
+# Any system that is using LibreSSL as the default SSL provider
+FLAGS := $(FLAGS) -ltls
 
 SRC = tlsrp.c util.c
 OBJ = $(SRC:.c=.o)
