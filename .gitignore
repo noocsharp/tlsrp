@@ -2,3 +2,4 @@ tlsrp
 config.h
 CA/*
 !CA/certgen.sh
+*.o
