@@ -257,7 +257,7 @@ main(int argc, char* argv[])
         die("can only receive on unix socket xor network socket");
 
     if (!ca_path || !cert_path || !key_path)
-        die("must provide ca_path, cert_path and key_path")
+        die("must provide ca_path, cert_path and key_path");
 
     if ((config = tls_config_new()) == NULL)
         tcdie(config, "failed to get tls config:");
