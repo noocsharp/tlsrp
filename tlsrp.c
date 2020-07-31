@@ -222,7 +222,7 @@ main(int argc, char* argv[])
          *cert_path = NULL,
          *key_path = NULL;
     int opt;
-    char *optstring = "a:h:H:k:p:P:r:u:U:";
+    char *optstring = "a:h:H:k:p:P:r:u:U:v";
 
     argv0 = argv[0];
 
@@ -254,6 +254,10 @@ main(int argc, char* argv[])
                 break;
             case 'U':
                 frontpath = optarg;
+                break;
+            case 'v':
+                printf("%s " VERSION "\n", argv0);
+                exit(0);
                 break;
             case '?':
             default:

@@ -1,9 +1,11 @@
+VERSION = 0.1
+
 # flags
 CC = cc
 CFLAGS = -std=c99 -Wall -Wextra
 
 # glibc
-CPPFLAGS = -D_XOPEN_SOURCE=700
+CPPFLAGS = -DVERSION=\"$(VERSION)\" -D_XOPEN_SOURCE=700
 
 # paths
 PREFIX = /usr/local
