@@ -9,20 +9,16 @@ tlsrp is a simple TLS reverse-proxy built on top of LibreSSL's libtls.
 
 A typical use case for tlsrp might be to turn a regular HTTP server into an
 HTTPS server. However, it is protocol agnostic, so it can be used for putting
-any TCP/IP protocol on top of a TLS layer. The server thinks its serving the
-plain protocol and the client thinks its receiving the secured protocol.
+any TCP/IP protocol on top of a TLS layer. The server gets to serve the plain
+protocol and the client receives the secured protocol.
+
+Through its arguments, tlsrp can be configured to listen and serve over both
+unix sockets and network sockets. The TLS parameters themselves can be
+configured by modifying config.h. See the manpage for more details.
 
 Dependencies
 ------------
 libtls from LibreSSL
-
-Usage
------
-tlsrp [-h backhost] [-H fronthost] -p backport -P frontport -ca ca_path 
-        -cert cert_path -key key_path
-
-tlsrp -U unixsocket [-H fronthost] -P frontport -ca ca_path 
-        -cert cert_path -key key_path
 
 TODO
 ----
