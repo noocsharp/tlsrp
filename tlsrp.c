@@ -14,7 +14,6 @@
 #include "config.h"
 
 #define BACKLOG 10
-#define BUF_SIZE 1024
 #define TIMEOUT 1000
 #define SERVER 0
 #define CLIENT 1
@@ -137,8 +136,8 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         {clientfd, POLLIN | POLLOUT, 0}
     };
 
-    char clibuf[BUF_SIZE] = {0};
-    char serbuf[BUF_SIZE] = {0};
+    char clibuf[BUFSIZ] = {0};
+    char serbuf[BUFSIZ] = {0};
 
     char *cliptr = NULL, *serptr = NULL;
 
@@ -150,7 +149,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
             return -1;
 
         if ((pfd[CLIENT].revents & POLLIN) && clicount == 0) {
-            clicount = tls_read(clientconn, clibuf, BUF_SIZE);
+            clicount = tls_read(clientconn, clibuf, BUFSIZ);
             if (clicount == -1) {
                 tdie(clientconn, "client read failed:");
                 return -2;
@@ -164,7 +163,7 @@ serve(int serverfd, int clientfd, struct tls *clientconn)
         }
 
         if ((pfd[SERVER].revents & POLLIN) && sercount == 0) {
-            sercount = read(serverfd, serbuf, BUF_SIZE);
+            sercount = read(serverfd, serbuf, BUFSIZ);
             if (sercount == -1) {
                 die("server read failed:");
                 return -3;
