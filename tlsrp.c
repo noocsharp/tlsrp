@@ -30,8 +30,8 @@ usage(void)
 static int
 donetworkbind(const char *host, const char *port)
 {
-    int sfd = -1;
-    struct addrinfo *results = NULL, *rp = NULL;
+    int sfd;
+    struct addrinfo *results, *rp;
     struct addrinfo hints = { .ai_family = AF_UNSPEC,
                               .ai_socktype = SOCK_STREAM};
 
@@ -45,16 +45,15 @@ donetworkbind(const char *host, const char *port)
         if (sfd == -1)
             continue;
 
-        if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
-            break;
+        if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0) {
+            freeaddrinfo(results);
+            return sfd;
+        }
 
         close(sfd);
     }
     
-    if (rp == NULL)
-        die("failed to bind:");
-
-    free(results);
+    die("failed to bind:");
     return sfd;
 }
 
